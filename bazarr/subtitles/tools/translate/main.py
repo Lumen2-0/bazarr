@@ -85,6 +85,12 @@ def translate_subtitles_file(video_path, source_srt_file, from_lang, to_lang, fo
             # otherwise, we just use the destination path as it is
             dest_srt_file = dest_srt_file_if_alongside_video
 
+        # Mark machine/AI translations (video.fr.ai.srt): Jellyfin shows the tag as the track title, and Bazarr
+        # indexes the file as a regular subtitle of that language (see subliminal_patch.core AI tag).
+        if settings.translator.mark_ai_translations:
+            dest_root, dest_ext = os.path.splitext(dest_srt_file)
+            dest_srt_file = f'{dest_root}.ai{dest_ext}'
+
         logging.debug(f'Using translator type: {translator_type}')
 
         translator = TranslatorFactory.create_translator(

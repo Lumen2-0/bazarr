@@ -24,6 +24,14 @@ from ..adaptive_searching import is_search_active, updateFailedAttempts
 from ..download import generate_subtitles
 
 
+def _auto_translate(media_type, media_id):
+    try:
+        from subtitles.tools.translate.auto import auto_translate_missing
+        auto_translate_missing(media_type, media_id)
+    except Exception:
+        logging.exception('BAZARR automatic translation failed')
+
+
 def _wanted_episode(episode, providers_list, job_id=None):
     audio_language_list = get_audio_profile_languages(episode.audio_language)
     if len(audio_language_list) > 0:
@@ -63,6 +71,8 @@ def _wanted_episode(episode, providers_list, job_id=None):
             send_notifications(episode.sonarrSeriesId, episode.sonarrEpisodeId, result.message)
             event_stream(type='series', action='update', payload=episode.sonarrSeriesId)
             event_stream(type='episode-wanted', action='delete', payload=episode.sonarrEpisodeId)
+
+    _auto_translate('episode', episode.sonarrEpisodeId)
 
     if not found_any and providers_list:
         for language in languages_to_stamp:

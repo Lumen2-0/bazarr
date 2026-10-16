@@ -953,7 +953,7 @@ def _search_external_subtitles(path, languages=None, only_one=False, match_stric
         adv_tag = None
         if len(split_tag) > 1:
             adv_tag = split_tag[1].lower()
-            if adv_tag in ['forced', 'normal', 'default', 'embedded', 'embedded-forced', 'custom', 'hi', 'cc', 'sdh']:
+            if adv_tag in ['forced', 'normal', 'default', 'embedded', 'embedded-forced', 'custom', 'hi', 'cc', 'sdh', 'ai']:
                 p_root = split_tag[0]
 
         forced = False

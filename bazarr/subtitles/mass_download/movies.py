@@ -21,6 +21,14 @@ from app.event_handler import event_stream
 from ..download import generate_subtitles
 
 
+def _auto_translate(media_type, media_id):
+    try:
+        from subtitles.tools.translate.auto import auto_translate_missing
+        auto_translate_missing(media_type, media_id)
+    except Exception:
+        logging.exception('BAZARR automatic translation failed')
+
+
 def movies_download_subtitles(no, job_id=None, job_sub_function=False):
     if not job_sub_function and not job_id:
         jobs_queue.add_job_from_function(f"""Downloading missing subtitles for """
@@ -109,6 +117,7 @@ def movies_download_subtitles(no, job_id=None, job_sub_function=False):
                     history_log_movie(1, no, result)
                     send_notifications_movie(no, result.message)
                     downloaded_count += 1
+        _auto_translate('movie', no)
         outcome_msg = (f"{downloaded_count} subtitle(s) downloaded"
                        if downloaded_count else "No subtitles found")
     else:

@@ -114,6 +114,43 @@ const SettingsProvidersTranslationView: FunctionComponent = () => {
           label="Add translation info at the beginning"
           settingKey="settings-translator-translator_info"
         ></Check>
+        <Check
+          label="Tag translated subtitles with .ai (e.g. video.fr.ai.srt)"
+          settingKey="settings-translator-mark_ai_translations"
+        ></Check>
+        <Message>
+          Translated files are named video.fr.ai.srt: Bazarr still counts them
+          as French, and media servers such as Jellyfin show "ai" in the track
+          name.
+        </Message>
+        <Check
+          label="Automatically translate when no subtitles are found"
+          settingKey="settings-translator-auto_translate"
+        ></Check>
+        <CollapseBox
+          settingKey="settings-translator-auto_translate"
+          on={(val) => val === true}
+        >
+          <Chips
+            label="Languages to generate"
+            settingKey="settings-translator-auto_translate_languages"
+          ></Chips>
+          <Text
+            label="Translate from"
+            settingKey="settings-translator-auto_translate_source"
+          />
+          <Number
+            label="Wait before translating (hours since the video was added)"
+            settingKey="settings-translator-auto_translate_delay_hours"
+            min={0}
+          />
+          <Message>
+            Bazarr first searches the providers. If a wanted language is still
+            missing after the delay, it is translated from the source language.
+            If a real subtitle is published later, the normal upgrade replaces
+            or complements the AI one.
+          </Message>
+        </CollapseBox>
       </Section>
     </Layout>
   );

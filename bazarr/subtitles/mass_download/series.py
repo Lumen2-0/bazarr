@@ -81,6 +81,14 @@ def series_download_subtitles(no, job_id=None, job_sub_function=False):
     jobs_queue.update_job_name(job_id=job_id, new_job_name=f"Downloaded missing subtitles for {series_row.title}")
 
 
+def _auto_translate(media_type, media_id):
+    try:
+        from subtitles.tools.translate.auto import auto_translate_missing
+        auto_translate_missing(media_type, media_id)
+    except Exception:
+        logging.exception('BAZARR automatic translation failed')
+
+
 def episode_download_subtitles(no, job_id=None, job_sub_function=False, providers_list=None, fallback_allowed=False):
     if not job_sub_function and not job_id:
         jobs_queue.add_job_from_function(f"""Downloading missing subtitles for {database.scalar(
@@ -171,6 +179,7 @@ def episode_download_subtitles(no, job_id=None, job_sub_function=False, provider
                     history_log(1, episode.sonarrSeriesId, episode.sonarrEpisodeId, result)
                     send_notifications(episode.sonarrSeriesId, episode.sonarrEpisodeId, result.message)
                     downloaded_count += 1
+        _auto_translate('episode', episode.sonarrEpisodeId)
         outcome_msg = (f"{downloaded_count} subtitle(s) downloaded"
                        if downloaded_count else "No subtitles found")
     else:

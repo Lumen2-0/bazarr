@@ -185,7 +185,7 @@ class OpenAITranslatorService:
             with open(self.dest_srt_file, 'w', encoding='utf-8') as f:
                 f.write(srt.compose(translated_subtitle))
 
-            add_translator_info(self.dest_srt_file, f'# Subtitles translated with {self.model_name} # ')
+            add_translator_info(self.dest_srt_file, f'# Traduit par IA ({self.model_name}) # ')
         except Exception as e:
             logger.error(f'BAZARR encountered an error translating with an OpenAI-compatible API: {e}')
             jobs_queue.update_job_progress(job_id=job_id, progress_message=f'Translation failed: {e}')

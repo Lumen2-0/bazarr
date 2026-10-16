@@ -22,6 +22,14 @@ from ..adaptive_searching import is_search_active, updateFailedAttempts
 from ..download import generate_subtitles
 
 
+def _auto_translate(media_type, media_id):
+    try:
+        from subtitles.tools.translate.auto import auto_translate_missing
+        auto_translate_missing(media_type, media_id)
+    except Exception:
+        logging.exception('BAZARR automatic translation failed')
+
+
 def _wanted_movie(movie, providers_list, job_id=None):
     audio_language_list = get_audio_profile_languages(movie.audio_language)
     if len(audio_language_list) > 0:
@@ -61,6 +69,8 @@ def _wanted_movie(movie, providers_list, job_id=None):
             history_log_movie(1, movie.radarrId, result)
             send_notifications_movie(movie.radarrId, result.message)
             event_stream(type='movie-wanted', action='delete', payload=movie.radarrId)
+
+    _auto_translate('movie', movie.radarrId)
 
     if not found_any and providers_list:
         for language in languages_to_stamp:
