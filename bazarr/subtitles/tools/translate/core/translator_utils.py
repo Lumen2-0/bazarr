@@ -79,7 +79,7 @@ def get_translation_extension(source_srt_file, original_format, translator_type)
 
     When ``original_format`` is true and the source has a supported text-based extension, that
     extension is preserved so a ``.ass``/``.vtt`` source is translated into a ``.ass``/``.vtt``
-    file instead of always being converted to ``.srt``. The Gemini translator reads and writes
+    file instead of always being converted to ``.srt``. The Gemini and OpenAI translators write
     SRT only, so for any non-SRT source it falls back to ``.srt``.
     """
     if not original_format:
@@ -89,7 +89,7 @@ def get_translation_extension(source_srt_file, original_format, translator_type)
     if src_ext not in SUPPORTED_TRANSLATION_EXTENSIONS:
         return '.srt'
 
-    if translator_type == 'gemini' and src_ext != '.srt':
+    if translator_type in ('gemini', 'openai') and src_ext != '.srt':
         logger.info(f'Gemini translator cannot preserve the {src_ext} format; falling back to .srt '
                     f'for {source_srt_file}')
         return '.srt'

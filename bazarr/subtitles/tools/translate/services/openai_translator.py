@@ -1,5 +1,6 @@
 # coding=utf-8
 
+import datetime
 import json
 import logging
 import re
@@ -67,6 +68,26 @@ class OpenAITranslatorService:
         if description:
             instruction += "\nAdditional user instruction: '" + description + "'"
         return instruction
+
+    @staticmethod
+    def _clean_text(text):
+        """Turn ASS/SSA/VTT override tags into plain text with <i> kept, so the model sees clean dialog."""
+        text = text.replace('{\\i1}', '<i>').replace('{\\i0}', '</i>')
+        text = re.sub(r'\{[^}]*\}', '', text)
+        return text.replace('\\N', '\n').replace('\\n', '\n').strip()
+
+    def _load_subtitles(self):
+        """Read any subtitle format Bazarr can produce (srt, ass, ssa, vtt...) as a list of SRT entries."""
+        subs = pysubs2.load(self.source_srt_file, encoding='utf-8')
+        subs.remove_miscellaneous_events()
+        entries = []
+        for event in subs:
+            content = self._clean_text(event.text)
+            if not content or '\\p1' in event.text:
+                continue
+            entries.append(srt.Subtitle(index=len(entries) + 1, start=datetime.timedelta(milliseconds=event.start),
+                                        end=datetime.timedelta(milliseconds=event.end), content=content))
+        return entries
 
     def _get_batch_size(self):
         try:
@@ -147,11 +168,10 @@ class OpenAITranslatorService:
             self.batch_size = self._get_batch_size()
             self.description = get_description(self.media_type, self.radarr_id, self.sonarr_series_id)
 
-            pysubs2.load(self.source_srt_file, encoding='utf-8')  # fail early on unreadable files
-            with open(self.source_srt_file, 'r', encoding='utf-8') as f:
-                original_subtitle = list(srt.parse(f.read()))
-            translated_subtitle = [srt.Subtitle(s.index, s.start, s.end, s.content, s.proprietary)
-                                   for s in original_subtitle]
+            original_subtitle = self._load_subtitles()
+            if not original_subtitle:
+                raise ValueError('The source subtitles file has no dialog to translate.')
+            translated_subtitle = [srt.Subtitle(s.index, s.start, s.end, s.content) for s in original_subtitle]
 
             total = len(original_subtitle)
             jobs_queue.update_job_progress(job_id=job_id, progress_max=total,
