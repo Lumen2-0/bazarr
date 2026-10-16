@@ -1,0 +1,22 @@
+# Deploiement Coolify de Bazarr (fork Lumen2-0/bazarr) : meme config et memes medias que l'ancienne stack media.
+services:
+  bazarr:
+    build:
+      context: .
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Paris
+    volumes:
+      - /srv/lumen/config/bazarr:/config
+      - /srv/lumen/media/movies:/movies
+      - /srv/lumen/media/tv:/tv
+      - /srv/lumen/media/anime-movies:/media/anime-movies
+      - /srv/lumen/media/anime-series:/media/anime-series
+    networks:
+      coolify:
+        aliases:
+          - lumen-bazarr
+
+networks:
+  coolify:
+    external: true
