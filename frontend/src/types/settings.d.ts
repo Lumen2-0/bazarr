@@ -189,6 +189,10 @@ declare namespace Settings {
     gemini_keys: string[];
     gemini_model: string;
     gemini_batch_size: number;
+    openai_url: string;
+    openai_key: string;
+    openai_model: string;
+    openai_batch_size: number;
     lingarr_url: string;
     lingarr_token: string;
     translator_info: boolean;

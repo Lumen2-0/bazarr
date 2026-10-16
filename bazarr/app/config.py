@@ -207,6 +207,10 @@ validators = [
     Validator('translator.gemini_batch_size', must_exist=True, default=300, is_type_of=int, gte=1),
     Validator('translator.translator_info', must_exist=True, default=True, is_type_of=bool),
     Validator('translator.translator_type', must_exist=True, default='google_translate', is_type_of=str, cast=str),
+    Validator('translator.openai_url', must_exist=True, default='https://api.openai.com/v1', is_type_of=str),
+    Validator('translator.openai_key', must_exist=True, default='', is_type_of=str, cast=str),
+    Validator('translator.openai_model', must_exist=True, default='gpt-4o-mini', is_type_of=str, cast=str),
+    Validator('translator.openai_batch_size', must_exist=True, default=100, is_type_of=int, gte=1),
     Validator('translator.lingarr_url', must_exist=True, default='http://lingarr:9876', is_type_of=str),
     Validator('translator.lingarr_token', must_exist=True, default='', is_type_of=str, cast=str),
 

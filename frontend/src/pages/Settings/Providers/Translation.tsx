@@ -65,6 +65,35 @@ const SettingsProvidersTranslationView: FunctionComponent = () => {
         </CollapseBox>
         <CollapseBox
           settingKey="settings-translator-translator_type"
+          on={(val) => val === "openai"}
+        >
+          <Text
+            label="API base URL"
+            settingKey="settings-translator-openai_url"
+          />
+          <Message>
+            Any OpenAI-compatible endpoint exposing /chat/completions (e.g.
+            https://api.openai.com/v1, https://openrouter.ai/api/v1 or a local
+            Ollama/LiteLLM server).
+          </Message>
+          <Text
+            label="API key"
+            settingKey="settings-translator-openai_key"
+          />
+          <Text label="Model" settingKey="settings-translator-openai_model" />
+          <Number
+            label="Batch size"
+            settingKey="settings-translator-openai_batch_size"
+            min={1}
+          />
+          <Message>
+            Number of subtitle lines sent in each request. If the model returns
+            malformed answers, Bazarr automatically splits the batch in two and
+            retries.
+          </Message>
+        </CollapseBox>
+        <CollapseBox
+          settingKey="settings-translator-translator_type"
           on={(val) => val === "lingarr"}
         >
           <Text

@@ -10,6 +10,10 @@ export const translatorOption: SelectorOption<string>[] = [
     value: "gemini",
   },
   {
+    label: "OpenAI-compatible (LLM)",
+    value: "openai",
+  },
+  {
     label: "Lingarr",
     value: "lingarr",
   },

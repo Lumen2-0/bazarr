@@ -12,6 +12,10 @@ class TranslatorFactory:
             from .gemini_translator import GeminiTranslatorService
             return GeminiTranslatorService(**kwargs)
 
+        elif translator_type == 'openai':
+            from .openai_translator import OpenAITranslatorService
+            return OpenAITranslatorService(**kwargs)
+
         elif translator_type == 'lingarr':
             from .lingarr_translator import LingarrTranslatorService
             return LingarrTranslatorService(**kwargs)
